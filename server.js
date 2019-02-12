@@ -42,7 +42,9 @@ require("./libs/multer");
 app.use("/", frontend);
 app.use("/", auth);
 
+
+
 app.use("/admin", admin);
 app.use("/admin/products", products);
 app.listen(3000);
-console.log("created!!!");
+console.log("creation done!!!");
