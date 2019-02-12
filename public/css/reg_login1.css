@@ -1,0 +1,22 @@
+.bg-img{
+    background-image:url('/img/bg.jpg');
+    background-size:cover;
+    background-position:center;
+    height:100vh;
+    };
+    .bg-1{
+       background-color:rgba(196, 90, 187, 0.356)
+    
+    }
+    .hey{
+        background-color: rgb(0,0,0,0.3);
+    width: 450px;
+    position: absolute;
+    top: 33%;
+    left: 16%;
+    text-align: center;
+    font-size: 26px;
+    color:oldlace;
+    padding: 35px 60px;
+    margin-left: 417px;
+    }

@@ -1,0 +1,165 @@
+<%- include partials/header.ejs %>
+<div class="container">
+  <button
+    class="btn btn-success float-right add-btn"
+    data-toggle="modal"
+    data-target="#addcato"
+  >
+    Add
+  </button>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>category name</th>
+        <th>category description</th>
+        <th>category img</th>
+        <th>Edit</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if(results_cat.length > 0) { %> <% for(var i=0;i<
+      results_cat.length;i++){ %>
+      <tr>
+        <td><%= results_cat[i].cat_name%></td>
+        <td><%= results_cat[i].cat_description %></td>
+        <td>
+          <div>
+            <img
+              src="/uploads/<%= results_cat[i].cat_img_name %>"
+              style="width: 200px; height:100px; "
+            />
+          </div>
+          <div>
+            <a href="/uploads/<%= results_cat[i].cat_img_name %>"
+              ><%= results_cat[i].cat_img_ogname %></a
+            >
+          </div>
+        </td>
+        <td>
+          <button
+            class="btn btn-primary edit-btn"
+            id="edit"
+            data-id="<%= results_cat[i].cat_id %>"
+          >
+            Edit
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-danger delete-btn"
+            data-id="<%= results_cat[i].cat_id %> "
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      <% } %> <% } %>
+    </tbody>
+  </table>
+</div>
+<div class="modal" id="addcato">
+  <div class="modal-dialog modal-lg">
+    <form
+      type="text"
+      action="/admin/categories"
+      id="cat"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Categories Details:</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="cat_name">Category name:</label>
+            <input
+              type="hidden"
+              class="form-control"
+              id="cat_id"
+              name="cat_id"
+            />
+            <input
+              type="text"
+              class="form-control"
+              id="cat_name"
+              name="cat_name"
+            />
+          </div>
+
+          <div clas="form-group">
+            <label for="cat_description">Category Description:</label>
+            <input
+              class="form-control"
+              type="text"
+              id="cat_description"
+              name="cat_description"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="cat_img">Category image:</label>
+            <input class="form-control" type="file" name="file-to-upload" />
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" id="save">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(".add-btn").on("click", function() {
+    $("#cat").attr("action", "/admin/categories");
+    $("input[name=cat_id]").val(0);
+  });
+
+  $(".delete-btn").on("click", function() {
+    var categ_id = $(this).data("id");
+    console.log(categ_id);
+    var that = this;
+    $.ajax({
+      type: "DELETE",
+      url: `/admin/categories/${categ_id}`,
+      dataType: "json",
+      success: function(resultData) {
+        $(that)
+          .closest("tr")
+          .remove();
+      }
+    });
+  });
+</script>
+<script>
+  $(".edit-btn").on("click", function() {
+    let categ_id = $(this).data("id");
+    $("input[name=cat_id]").val(categ_id)
+    $("#cat").attr("action", "/admin/categories/" + categ_id);
+    $.ajax({
+      type: "GET",
+      dataType: "JSON",
+      url: `/admin/categories/${categ_id}`,
+      success: function(resultData) {
+        if (resultData.categ.cat_name) {
+          $("input[name=cat_name]").val(resultData.categ.cat_name);
+          $("input[name=cat_description]").val(
+            resultData.categ.cat_description
+          );
+          $("#addcato").modal("show");
+        }
+      }
+    });
+  });
+</script>
+
+<%- include partials/footer.ejs %>

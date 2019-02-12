@@ -1,0 +1,196 @@
+<%- include partials/header.ejs %>
+<div class="container">
+  <button
+    class="btn btn-success float-right add-btn"
+    data-toggle="modal"
+    data-target="#addpro"
+  >
+    Add
+  </button>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product name</th>
+        <th>Product Cost</th>
+        <th>Product Categories</th>
+        <th>Product images</th>
+        <th>Edit</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if(results_pro.length > 0) { %> <% for(var i=0;i<
+      results_pro.length;i++){ %>
+      <tr>
+        <td><%= results_pro[i].pro_name%></td>
+        <td><%= results_pro[i].pro_cost%></td>
+
+        <td><%= results_pro[i].cate %></td>
+        <td>
+          <div>
+            <img
+              src="/uploads/<%= results_pro[i].pro_img_name %>"
+              style="width: 200px; height:100px; "
+            />
+          </div>
+          <div>
+            <a href="/uploads/<%= results_pro[i].pro_img_name %>"
+              ><%= results_pro[i].pro_img_ogname %></a
+            >
+          </div>
+        </td>
+        <td>
+          <button
+            class="btn btn-primary edit-btn"
+            id="edit"
+            data-id="<%= results_pro[i].pro_id %>"
+          >
+            Edit
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-danger delete-btn"
+            data-id="<%= results_pro[i].pro_id %> "
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+      <% } %> <% } %>
+    </tbody>
+  </table>
+</div>
+<div class="modal" id="addpro">
+  <div class="modal-dialog modal-lg">
+    <form
+      type="text"
+      action="/admin/products"
+      id="pro"
+      method="POST"
+      enctype="multipart/form-data"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Products Details:</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="pro_name">Product name:</label>
+            <input
+              type="hidden"
+              class="form-control"
+              id="pro_id"
+              name="pro_id"
+            />
+            <input
+              type="text"
+              class="form-control"
+              id="pro_name"
+              name="pro_name"
+            />
+          </div>
+
+          <div clas="form-group">
+            <label for="pro_cost">Product cost:</label>
+            <input
+              class="form-control"
+              type="text"
+              id="pro_cost"
+              name="pro_cost"
+            />
+          </div>
+          <br />
+          <div clas="form-group">
+            <label for="pro_categories">Product categories:</label>
+            <select
+              multiple
+              class="form-control select"
+              type="text"
+              id="pro_categories"
+              name="pro_categories"
+            >
+              <% for(var i =0; i < cat.length; i++) { %>
+              <option value="<%= cat[i].cat_id %>"><%= cat[i].cat_name %></option>
+
+              <% } %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pro_img">product image:</label>
+            <input class="form-control" type="file" name="file-to-upload" />
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" id="save">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $("#pro_categories").selectpicker();
+
+  $(".add-btn").on("click", function() {
+    $("#pro").attr("action", "/admin/products");
+    $("input[name=pro_id]").val(0);
+  });
+
+  $(".delete-btn").on("click", function() {
+    var pro_id = $(this).data("id");
+    console.log(pro_id);
+    var that = this;
+    $.ajax({
+      type: "DELETE",
+      url: `/admin/products/${pro_id}`,
+      dataType: "json",
+      success: function(resultData) {
+        $(that)
+          .closest("tr")
+          .remove();
+      }
+    });
+  });
+</script>
+<script>
+  $(".edit-btn").on("click", function() {
+    let pro_id = $(this).data("id");
+    $("input[name=pro_id]").val(pro_id);
+    $("#pro").attr("action", "/admin/products/" + pro_id);
+    $.ajax({
+      type: "GET",
+      dataType: "JSON",
+      url: `/admin/products/${pro_id}`,
+      success: function(resultData) {
+        console.log(resultData);
+        if (resultData.products.pro_name) {
+          $("input[name=pro_name]").val(resultData.products.pro_name);
+          $("input[name=pro_cost]").val(resultData.products.pro_cost);
+          $("#pro_categories").selectpicker("val", resultData.pro_cats);
+          $("#addpro").modal("show");
+        }
+      }
+    });
+  });
+</script>
+<script>
+// var pro_categories = [];
+// $('[name="pro_categories"]:checked').each(function(i,e) {
+//   pro_categories.push(e.value);
+// });
+
+// pro_cat_result = pro_categories.join(',');
+// console.log(pro_cat_result)
+
+</script>
+
+<%- include partials/footer.ejs %>

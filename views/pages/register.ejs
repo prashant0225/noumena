@@ -1,0 +1,144 @@
+<%-include partials/reg_login_header.ejs %>
+<div class="page-wrapper bg-gra-01 p-t-180 p-b-100 font-poppins">
+  <div class="wrapper wrapper--w780">
+    <div class="card card-3">
+      <div class="card-heading"></div>
+      <div class="card-body">
+        <h2 class="title">Registration Info</h2>
+        <form id="reg-frm" action="/reg" method="POST">
+          <div class="input-group">
+            <input
+              class="input--style-3"
+              type="text"
+              placeholder="firstname"
+              name="name"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              class="input--style-3"
+              type="text"
+              placeholder="Lastname"
+              name="lastname"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              class="input--style-3"
+              type="text"
+              placeholder="Phone"
+              name="phone"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              class="input--style-3"
+              type="email"
+              placeholder="Email"
+              id="to"
+              name="username"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              class="input--style-3"
+              type="password"
+              placeholder="Password"
+              name="password"
+              id="password"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              class="input--style-3"
+              type="password"
+              placeholder="Re-enter Password"
+              name="confirmpassword"
+              id="confirmpassword"
+              required
+            />
+          </div>
+          <div class="p-t-10">
+            <button
+              class="btn btn--pill btn--green"
+              id="btn-submit"
+              type="submit"
+            >
+              Submit
+            </button>
+          </div>
+          <br />
+          <div class="main">
+            <h4 style="color:white"><a href="/login">I have an acoount</a></h4>
+          </div>
+
+          <div><span id="message"></span></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(function() {
+    $.validator.addMethod("alpha", function(value, element) {
+      return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
+    });
+
+    $("#reg-frm").validate({
+      rules: {
+        name: "alpha",
+        password: "required",
+        confirmpassword: {
+          equalTo: "#password"
+        },
+        username: {
+          required: true,
+          email: true,
+          remote: "/validate-user"
+        }
+      },
+      messages: {
+        name: {
+          required: "Enter your name",
+          alpha: "Invalid name"
+        }
+      },
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+    // $("#btn-submit").on('click',function (e) {
+    //     e.preventDefault();
+    //     var password = $("#password").val();
+    //     var confirmPassword = $("#confirmpassword").val();
+    //     if (password != confirmPassword) {
+    //         alert("Passwords do not match.");
+    //         return false;
+    //     }
+    //    // return $('#reg-frm').submit();
+    // });
+  });
+</script>
+<!-- <script>
+  $(document).ready(function() {
+    var from, to, subject, text;
+    to = "#to".val();
+    $.post(
+        "/email",
+        { to: to,},
+        function(data) {
+          if (data == "sent") {
+            $("#message")
+              .empty()
+              .html("Email is been sent at " + to + " . Please check inbox!");
+          }
+        }
+      );
+  });
+</script> -->
+<%-include partials/reg_login_footer.ejs %>
